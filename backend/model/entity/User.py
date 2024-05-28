@@ -14,4 +14,3 @@ class UserDB(Base):
     mail = Column(String, index=True, unique=True)
     password = Column(String)
     entity = Column(Enum(EntityType))
-    

@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from controller.Login import router as login_router
 from controller.RegisterUser import router as register_router
+from controller.Profile import router as profile_router
 from model.dao.UserDao import get_users
-from utils.Dependencies import get_db
+from DataSource import get_db
 import DataSource as ds
+from model.schemas.UserSchemas import User
 
 ds.Base.metadata.create_all(bind=ds.engine)
 
@@ -29,6 +31,7 @@ app.add_middleware(
 
 app.include_router(login_router)
 app.include_router(register_router)
+app.include_router(profile_router)
 
 
 
@@ -38,7 +41,6 @@ def read_root():
 
 @app.get("/users")
 def getAllusers(db: Session = Depends(get_db)):
-    users = get_users(db=db)
-    return users
+    return get_users(db=db)
 
 

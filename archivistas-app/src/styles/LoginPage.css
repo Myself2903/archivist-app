@@ -91,6 +91,23 @@
   color: #B6B6B6; /* Cambia este valor al color que desees */
 }
 
+.invalidInput{
+  animation: shake 0.5s ease-in-out;
+  background-color: rgba(230, 100, 100, 0.5)
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0); /* La posición inicial y final */
+  }
+  20%, 60% {
+    transform: translateX(-5px); /* Define el movimiento de la animación */
+  }
+  40%, 80% {
+    transform: translateX(5px); /* Define el movimiento de la animación */
+  }
+}
+
 .forgot-pass{
   color: #7198FF;
   font-size: small;
