@@ -29,10 +29,7 @@ def get_user_by_mail(db:Session, mail:str):
 def get_users(db:Session, skip:int=0, limit:int=100):
     return db.query(UserDB).offset(skip).limit(limit).all()
 
-def update_user(db: Session, user_db: UserDB, user_update: UserUpdate):
-    if not user_db:
-        return None
-    
+def update_user(db: Session, user_db: UserDB, user_update: UserUpdate):    
     update_data = user_update.model_dump(exclude_unset=True)
 
     if 'password' in update_data:

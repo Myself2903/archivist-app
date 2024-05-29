@@ -78,7 +78,7 @@ export default function LoginPage() {
   return (
     <>
       <div className='login-page'>
-        <header className='login-header'>
+        <header className='app-header'>
           {/* <div className="top-container"> */}
             {/* <h1>Archivos Sin Caos</h1> */}
           {/* </div> */}
@@ -120,7 +120,7 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-        <footer className='login-footer'>
+        <footer className='app-footer'>
         </footer>
       </div>  
     </> 

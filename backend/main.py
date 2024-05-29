@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from controller.Login import router as login_router
 from controller.RegisterUser import router as register_router
 from controller.Profile import router as profile_router
+from controller.ProjectController import router as project_router
 from model.dao.UserDao import get_users
 from DataSource import get_db
 import DataSource as ds
@@ -32,7 +33,7 @@ app.add_middleware(
 app.include_router(login_router)
 app.include_router(register_router)
 app.include_router(profile_router)
-
+app.include_router(project_router)
 
 
 @app.get("/")

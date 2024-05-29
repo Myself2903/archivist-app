@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, Security
+from fastapi import APIRouter, HTTPException, Depends, Body
 from DataSource import get_db
 from model.dao.UserDao import delete_user, update_user
 from model.schemas.UserSchemas import User, UserUpdate
@@ -6,9 +6,9 @@ from typing import Annotated
 from security.Oauth import get_current_user, oauth2_scheme, Token
 from sqlalchemy.orm import Session
 
-router = APIRouter()
+router = APIRouter(prefix="/profile")
 
-@router.put("/profile/update", response_model= User)
+@router.put("/update", response_model= User)
 def updateProfile(
             token: Annotated[Token, Depends(oauth2_scheme)], 
             user_update: UserUpdate = Body(...),
@@ -26,7 +26,7 @@ def updateProfile(
         
         return user_db
 
-@router.delete("/profile/delete", response_model=None)
+@router.delete("/delete", response_model=None)
 def deleteProfile(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     user = get_current_user(db=db, token=token)
     print(user)

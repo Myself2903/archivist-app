@@ -6,18 +6,6 @@
   flex-direction: column;
 }
 
-.login-header,
-.login-footer{
-  background-color: #7f6cb0;
-  color: white;
-  width: 100%;
-  height: 15%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  flex-shrink: 0;
-}
 
 .center-container {
   display: flex;
@@ -38,11 +26,6 @@
   height: 100%;
 }
 
-/* .image-container {
-  width: fit-content;
-  height: fit-content;
-} */
-
 
 .office-girl{
   border-radius: 10px;
@@ -60,7 +43,7 @@
   display: flex;
   flex-direction: column;
   align-items: top;
-  border: solid 3px #CEBAD6;; /* Color de resalte 1 */
+  border: solid 3px #CEBAD6;
   border-radius: 20px;
   padding: 2% 5%;
   width: 25%;
@@ -88,7 +71,11 @@
 }
 
 .formInput::placeholder {
-  color: #B6B6B6; /* Cambia este valor al color que desees */
+  color: #B6B6B6; 
+}
+
+.formInput:focus {
+  outline: none;
 }
 
 .invalidInput{
@@ -98,13 +85,13 @@
 
 @keyframes shake {
   0%, 100% {
-    transform: translateX(0); /* La posición inicial y final */
+    transform: translateX(0);
   }
   20%, 60% {
-    transform: translateX(-5px); /* Define el movimiento de la animación */
+    transform: translateX(-5px);
   }
   40%, 80% {
-    transform: translateX(5px); /* Define el movimiento de la animación */
+    transform: translateX(5px);
   }
 }
 
@@ -133,7 +120,3 @@
   background-color: #e0aaff;
   color: white;
 }
-
-
-
-

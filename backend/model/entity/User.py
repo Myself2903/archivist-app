@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, Enum
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import relationship
 from DataSource import Base
 from utils.EntityType import EntityType
+from model.entity.Project import ProjectDB
 
-# Definición del modelo de SQLAlchemy para la base de datos
+# SQLAlchemy User definition for data base entity
 class UserDB(Base):
     __tablename__ = 'users'
 
@@ -14,3 +15,5 @@ class UserDB(Base):
     mail = Column(String, index=True, unique=True)
     password = Column(String)
     entity = Column(Enum(EntityType))
+
+    projects = relationship("ProjectDB", back_populates="owner")

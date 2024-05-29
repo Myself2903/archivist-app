@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from utils.EntityType import EntityType
+from model.schemas.ProjectSchemas import Project
+
 
 class UserBase(BaseModel):
     username: str
@@ -13,8 +15,9 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    projects: list[Project] = []
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserUpdate(BaseModel):
     username: str | None = None
