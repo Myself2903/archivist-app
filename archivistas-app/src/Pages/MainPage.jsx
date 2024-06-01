@@ -2,9 +2,7 @@ import { fetchToken } from "../Auth";
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/LogoBoliRegla.png'
-import menu_icon from '../assets/menu-svgrepo-com.svg'
 import axios from "axios"
-import "../styles/MainPage.css"
 
 export default function MainPage(){
     const location = useLocation();
@@ -75,7 +73,6 @@ export default function MainPage(){
                 </div>
 
                 <div className="header-right-container">
-                    <img src={menu_icon} alt="menu" className="menu-image-header" />
                 </div>
             </header>
             
