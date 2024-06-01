@@ -1,4 +1,5 @@
 #Como migrar a yarn
+
 -1 Hacer pull al repositorio
 -2 Asegurarse de que package.lock sea eliminado
 -3 Ejecutar el comando "yarn"
