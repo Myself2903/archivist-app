@@ -1,10 +1,8 @@
 import { fetchToken } from "../Auth";
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/LogoBoliRegla.png'
-import menu_icon from '../assets/menu-svgrepo-com.svg'
 import axios from "axios"
-import '../styles/MainPage.css'
+import Footer from "../universal/footer/Footer"
 
 
 export default function MainPage(){
@@ -72,11 +70,9 @@ export default function MainPage(){
         <div className="main-page">
             <header className="app-header">
                 <div className="header-left-container">
-                    <img src={logo} alt="Logo" className="logo-image-header" />
                 </div>
 
                 <div className="header-right-container">
-                    <img src={menu_icon} alt="menu" className="menu-image-header" />
                 </div>
             </header>
             
@@ -117,6 +113,7 @@ export default function MainPage(){
                             )}
                         </tbody>
                     </table>
+                    <Footer />
                 </div>
             </div>
         </div>
