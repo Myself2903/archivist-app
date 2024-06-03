@@ -43,6 +43,8 @@ def update_user(db: Session, user_db: UserDB, user_update: UserUpdate):
         db.refresh(user_db)
     except IntegrityError as e:
         db.rollback()
+
+        #detailing field with errors
         error_info = str(e.orig)
         column_match = re.search(r"DETAIL:\s+Key\s+\((\w+)\)=\((.*?)\)\salready\sexists\.", error_info)
 

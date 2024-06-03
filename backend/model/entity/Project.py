@@ -1,6 +1,7 @@
 from DataSource import Base
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
+from model.entity.Dependency import DependencyDB
 from datetime import datetime
 
 class ProjectDB(Base):
@@ -16,3 +17,5 @@ class ProjectDB(Base):
     
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("UserDB", back_populates="projects")
+
+    dependencies = relationship("DependencyDB", back_populates="project")

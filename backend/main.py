@@ -5,6 +5,7 @@ from controller.Login import router as login_router
 from controller.RegisterUser import router as register_router
 from controller.Profile import router as profile_router
 from controller.ProjectController import router as project_router
+from controller.DependencyController import router as dependency_router
 from model.dao.UserDao import get_users
 from DataSource import get_db
 import DataSource as ds
@@ -34,7 +35,7 @@ app.include_router(login_router)
 app.include_router(register_router)
 app.include_router(profile_router)
 app.include_router(project_router)
-
+app.include_router(dependency_router)
 
 @app.get("/")
 def read_root():

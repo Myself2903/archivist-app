@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from model.schemas.UserSchemas import User
 
 class ProjectBase(BaseModel):
     name: str
@@ -15,12 +16,12 @@ class ProjectCreate(ProjectBase):
 class Project(ProjectBase):
     id: int
     owner_id: int
+    owner: User
 
     class Config:
         from_attributes = True
 
 class ProjectUpdate(BaseModel):
-    id: int | None = None
     name: str | None = None
     active: bool | None = None
     enterprise: str | None = None

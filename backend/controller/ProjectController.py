@@ -17,6 +17,18 @@ def get_users_projects(
     user = get_current_user(db=db, token=token)
     return get_projects_by_user(db=db, user_id=user.id)
 
+
+@router.get("/active_state",response_model=list[Project])
+def get_users_projects_by_active_state(
+        token:  Annotated[Token, Depends(oauth2_scheme)],
+        active_state: bool = True,
+        db: Session = Depends(get_db)
+    ):
+    
+    user = get_current_user(db=db, token=token)
+    return get_projects_by_user_and_active_state(db=db, user_id=user.id,active_state=active_state)
+
+
 @router.post("/create", response_model=Project)
 def create_user_project(
         token:  Annotated[Token, Depends(oauth2_scheme)],
@@ -26,6 +38,7 @@ def create_user_project(
     user = get_current_user(db=db, token=token)
 
     return create_project(db=db, project=project, user_id=user.id)
+
 
 @router.put("/update", response_model=Project)
 def update_user_project(
@@ -48,6 +61,7 @@ def update_user_project(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user not allowed to edit project")
 
     return project_db
+
 
 @router.delete("/delete", response_model=None)
 def delete_user_project(

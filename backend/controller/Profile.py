@@ -29,6 +29,5 @@ def updateProfile(
 @router.delete("/delete", response_model=None)
 def deleteProfile(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     user = get_current_user(db=db, token=token)
-    print(user)
     delete_user(db=db, id_user=user.id)
     raise HTTPException(status_code=204, detail="user deleted")

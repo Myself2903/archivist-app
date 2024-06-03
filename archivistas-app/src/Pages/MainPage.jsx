@@ -2,7 +2,10 @@ import { fetchToken } from "../Auth";
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/LogoBoliRegla.png'
+import menu_icon from '../assets/menu-svgrepo-com.svg'
 import axios from "axios"
+import '../styles/MainPage.css'
+
 
 export default function MainPage(){
     const location = useLocation();
@@ -11,7 +14,7 @@ export default function MainPage(){
     const [projects, setProjects] = useState([])
     const [showSearchIcon, setShowSearchIcon] = useState(true);
     const URL = "http://127.0.0.1:8000"
-    const URL_EXTENSION = "/profile/projects"
+    const URL_EXTENSION = "/profile/projects/active_state"
 
     const instance = axios.create({
         headers: {
@@ -73,6 +76,7 @@ export default function MainPage(){
                 </div>
 
                 <div className="header-right-container">
+                    <img src={menu_icon} alt="menu" className="menu-image-header" />
                 </div>
             </header>
             
@@ -107,7 +111,7 @@ export default function MainPage(){
                                 <tr key={project.id}>
                                     <td><a>{project.name}</a></td>
                                     <td>{project.last_edition_date}</td>
-                                    <td>{project.owner}</td>
+                                    <td>{project.owner.username}</td>
                                     <td><i className="fa fa-ellipsis-v" aria-hidden="true" /></td>
                                 </tr>
                             )}

@@ -21,7 +21,7 @@ crypt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY  = '40sasldkjwd2123bvquweo0pimsañpoqweim' 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_DAYS = 1
 
 
 def verify_password(plain_password, hashed_password):
@@ -68,9 +68,12 @@ def get_current_user(db: Session, token: Annotated[str, Depends(oauth2_scheme)])
         if id is None:
             raise credentials_exception
         token_data = TokenData(id=str(id))
+
     except InvalidTokenError:
         raise credentials_exception
+    
     user = get_user(db, user_id=token_data.id)
+    
     if user is None:
         raise credentials_exception
     return user

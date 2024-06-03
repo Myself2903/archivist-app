@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from utils.EntityType import EntityType
-from model.schemas.ProjectSchemas import Project
 
 
 class UserBase(BaseModel):
@@ -15,7 +14,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    projects: list[Project] = []
+
     class Config:
         from_attributes = True
 
