@@ -4,4 +4,4 @@
 2.  Asegurarse de que package.lock sea eliminado
 3.  Ejecutar el comando "yarn"
 4.  Ejecutar el comando "yarn -v" para asegurarse de que se haya instalado
-5.  Ejecutar el comando "yarn run" para inicializar la aplicación en un puerto
+5.  Ejecutar el comando "yarn run dev" para inicializar la aplicación en un puerto
