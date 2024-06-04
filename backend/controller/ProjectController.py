@@ -2,9 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends, Body, status
 from model.schemas.ProjectSchemas import Project, ProjectCreate
 from sqlalchemy.orm import Session
 from DataSource import get_db  
-from security.Oauth import get_current_user, oauth2_scheme, Token
+from security.Oauth import get_current_user, oauth2_scheme, Token, get_token_data
 from model.dao.ProjectDao import *
 from typing import Annotated
+from typing import Optional
 
 router = APIRouter(prefix="/profile/projects")
 
@@ -16,6 +17,22 @@ def get_users_projects(
     
     user = get_current_user(db=db, token=token)
     return get_projects_by_user(db=db, user_id=user.id)
+
+
+@router.get("/verify_access", response_model=bool)
+def verify_project_access_no_token(project_id: int, db: Session = Depends(get_db)):
+    return get_project(db=db, project_id=project_id).public_access
+
+@router.get("/verify_access/token", response_model=bool)
+def verify_project_access(
+                    project_id: int, 
+                    token:  Annotated[Token, Depends(oauth2_scheme)],
+                    db: Session = Depends(get_db)):
+    
+    project = get_project(db=db, project_id=project_id)
+    token_data = get_token_data(token=token) 
+    
+    return project.owner_id == int(token_data.id) or project.public_access
 
 
 @router.get("/active_state",response_model=list[Project])

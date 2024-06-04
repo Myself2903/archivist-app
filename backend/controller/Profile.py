@@ -8,6 +8,13 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/profile")
 
+@router.get("", response_model= User)
+def getUserData(
+            token: Annotated[Token, Depends(oauth2_scheme)], 
+            db: Session = Depends(get_db)
+        ):
+      return get_current_user(db=db, token=token)
+
 @router.put("/update", response_model= User)
 def updateProfile(
             token: Annotated[Token, Depends(oauth2_scheme)], 

@@ -83,7 +83,14 @@ export default function MainPage(){
                         <tbody>
                             {projects.map(project =>
                                 <tr key={project.id}>
-                                    <td><a href={`/org_chart/${project.id}`}>{project.name}</a></td>
+                                    <td><label 
+                                            onClick={() => navigate(`/org_chart/${project.id}`)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                        {project.name}
+                                        </label>
+                                    </td>
+
                                     <td>{project.last_edition_date}</td>
                                     <td>{project.owner.username}</td>
                                     <td><i className="fa fa-ellipsis-v" aria-hidden="true" /></td>
