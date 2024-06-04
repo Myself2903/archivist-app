@@ -22,6 +22,7 @@ import {
     ModalContent,
     ModalHeader,
     ModalCloseButton,
+    ModalFooter,
     ModalBody,
     FormControl,
     Button,
@@ -57,7 +58,6 @@ export default function MainPage() {
                 .then(response => {
                     setProjects(response.data)
                     setFilteredProjects(response.data)
-                    console.log(response.data)
                 })
         }
         fetch_project_data()
@@ -75,7 +75,7 @@ export default function MainPage() {
         setSearchQuery(e.target.value);
     };
 
-    const newProjectModal = () => {
+    const NewProjectModal = () => {
         return (
             <Modal
                 isOpen={isCreateOpen}
@@ -92,7 +92,7 @@ export default function MainPage() {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button onClick={addOnClose} mr={3}>Cancelar</Button>
+                        <Button onClick={onCreateClose} mr={3}>Cancelar</Button>
                         <Button colorScheme='purple' >
                             Crear
                         </Button>
@@ -116,6 +116,7 @@ export default function MainPage() {
                     mr='3'
                 />
                 <FaFolderPlus color='#7f6bb0' size='35' cursor='pointer' onClick={onCreateOpen} />
+                <NewProjectModal/>
             </Flex>
             <Container minW='100%' minH="100vh" p='0'>
                 <TableContainer>
