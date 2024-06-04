@@ -11,8 +11,7 @@ class DependencyCreate(DependencyBase):
 
 class Dependency(DependencyBase):
     id: int
-    father_id: int | None
-    # children: List['Dependency'] = []
+    children: List['Dependency'] = []
 
     class Config:
         from_attributes = True

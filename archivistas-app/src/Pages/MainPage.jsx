@@ -1,12 +1,11 @@
 import { fetchToken } from "../Auth";
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import Footer from "../universal/footer/Footer"
 
 
 export default function MainPage(){
-    const location = useLocation();
     const token = fetchToken();
     const navigate = useNavigate();
     const [projects, setProjects] = useState([])
@@ -44,27 +43,6 @@ export default function MainPage(){
         else
             setShowSearchIcon(true)
     };
-
-    // const projects = [
-    //     {
-    //         id: 1,
-    //         name: "Proyecto A",
-    //         last_edition: "2024-05-28",
-    //         owner: "Usuario 1"
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Proyecto B",
-    //         last_edition: "2024-05-27",
-    //         owner: "Usuario 2"
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Proyecto C",
-    //         last_edition: "2024-05-26",
-    //         owner: "Usuario 3"
-    //     }
-    // ];
 
     return (<>
         <div className="main-page">
@@ -105,7 +83,7 @@ export default function MainPage(){
                         <tbody>
                             {projects.map(project =>
                                 <tr key={project.id}>
-                                    <td><a>{project.name}</a></td>
+                                    <td><a href={`/org_chart/${project.id}`}>{project.name}</a></td>
                                     <td>{project.last_edition_date}</td>
                                     <td>{project.owner.username}</td>
                                     <td><i className="fa fa-ellipsis-v" aria-hidden="true" /></td>

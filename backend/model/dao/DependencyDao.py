@@ -9,7 +9,7 @@ def get_dependency(db: Session, dependency_id: int):
     return db.query(DependencyDB).filter(DependencyDB.id == dependency_id).first()
 
 def get_dependencies_by_project(db: Session, project_id: int):
-    return db.query(DependencyDB).filter(DependencyDB.project_id == project_id).all()
+    return db.query(DependencyDB).filter(DependencyDB.project_id == project_id).first()
 
 #get all dependencies
 def get_dependencies(db:Session, skip:int=0, limit:int=100):
