@@ -19,7 +19,7 @@ function App(){
                 />
 
                 <Route 
-                    path="/org_chart"
+                    path="/org_chart/:project_id"
                     element={<><OrgChartPage/></>}
                 />
             </Routes>

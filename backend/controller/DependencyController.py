@@ -7,7 +7,7 @@ from utils.Exceptions import PermissionDeniedException, MultipleRootDependencyEx
 
 router = APIRouter(prefix="/project/org_chart")
 
-@router.get("", response_model=list[Dependency])
+@router.get("", response_model=Dependency)
 def get_project_dependencies(project_id: int, db: Session = Depends(get_db)):
     return get_dependencies_by_project(db=db,project_id=project_id)
 
