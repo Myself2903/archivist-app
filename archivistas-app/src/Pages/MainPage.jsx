@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { format } from 'date-fns';
 import NavigationAndFooter from "../layout/NavigationAndFooter";
-import { FaPen, FaRegTrashAlt } from "react-icons/fa";
+import { FaPen, FaRegTrashAlt, FaFolderPlus } from "react-icons/fa";
 import {
     Table,
     Thead,
@@ -37,8 +37,7 @@ export default function MainPage() {
     const [filteredProjects, setFilteredProjects] = useState(projects);
     const URL = "http://127.0.0.1:8000"
     const URL_EXTENSION = "/profile/projects/active_state"
-    const { isCreateOpen, onCreateOpen, onCreateClose } = useDisclosure()
-    const finalRef = React.useRef(null)
+    const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
 
     const instance = axios.create({
         headers: {
@@ -76,36 +75,36 @@ export default function MainPage() {
         setSearchQuery(e.target.value);
     };
 
-    const newProjectModal = () =>{
-        return(
+    const newProjectModal = () => {
+        return (
             <Modal
-                initialFocusRef={initialRef}
-                isOpen={addIsOpen}
-                onClose={addOnClose}
+                isOpen={isCreateOpen}
+                onClose={onCreateClose}
             >
                 <ModalOverlay />
                 <ModalContent>
-                <ModalHeader>Crear nueva dependencia</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={6}>
-                    <FormControl>
-                    <Input ref={initialRef} placeholder='Nombre' />
-                    </FormControl>
-                </ModalBody>
+                    <ModalHeader>Crear nuevo proyecto</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                        <FormControl>
+                            <Input placeholder='Nombre' />
+                        </FormControl>
+                    </ModalBody>
 
-                <ModalFooter>
-                    <Button onClick={addOnClose} mr={3}>Cancelar</Button>
-                    <Button colorScheme='purple' >
-                    Crear
-                    </Button>
-                </ModalFooter>
+                    <ModalFooter>
+                        <Button onClick={addOnClose} mr={3}>Cancelar</Button>
+                        <Button colorScheme='purple' >
+                            Crear
+                        </Button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
-    )}
+        )
+    }
 
     return (<>
         <NavigationAndFooter>
-            <Flex alignContent='center' pl='10'>
+            <Flex pl='10' alignItems='center'>
                 <Box textAlign="center" py={4} fontWeight="bold" textColor='#7f6bb0'>
                     Selecciona tu proyecto
                 </Box>
@@ -113,9 +112,10 @@ export default function MainPage() {
                     placeholder='Busca tu proyecto...'
                     onChange={handleSearchBarChange}
                     width='40%'
-                    alignSelf='center'
                     ml='5'
+                    mr='3'
                 />
+                <FaFolderPlus color='#7f6bb0' size='35' cursor='pointer' onClick={onCreateOpen} />
             </Flex>
             <Container minW='100%' minH="100vh" p='0'>
                 <TableContainer>
@@ -142,8 +142,8 @@ export default function MainPage() {
                                     <Td>{project.owner.username}</Td>
                                     <Td>
                                         <Flex gap='10'>
-                                            <FaPen cursor='pointer'/>
-                                            <FaRegTrashAlt cursor='pointer'/>
+                                            <FaPen cursor='pointer' />
+                                            <FaRegTrashAlt cursor='pointer' />
                                         </Flex>
                                     </Td>
                                 </Tr>
