@@ -31,7 +31,8 @@ export default function Footer() {
 		<div>
 			<Container
 				as={Stack}
-				maxW={'7xl'}
+				maxW={'100%'}
+				minW={'100%'}
 				mt={0}
 				py={6}
 				direction={{ base: 'column', md: 'row' }}
