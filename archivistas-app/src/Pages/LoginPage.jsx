@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import axios from "axios"
 import NavigationAndFooter from '../layout/NavigationAndFooter'
-import SimpleSidebar from '../universal/sidebar/Sidebar'
+import { Button, Flex, FormControl, FormHelperText, FormLabel, Image, Input } from '@chakra-ui/react'
 
 export default function LoginPage() {
 	const [count, setCount] = useState(0)
@@ -23,14 +23,6 @@ export default function LoginPage() {
 	//login verification function
 	const login = async (event) => {
 		event.preventDefault(); //prevent page to reload
-
-		//check for not empty
-		if (loginForm.username == "") {
-			setEmailValid(false)
-			if (loginForm.password == "")
-				setPasswordValid(false)
-			return;
-		}
 
 		if (loginForm.password == "") {
 			setPasswordValid(false)
@@ -73,53 +65,29 @@ export default function LoginPage() {
 			});
 	}
 
-
 	return (
-		<div>
-			<NavigationAndFooter>
-				<div className='login-page'>
-					<header className='app-header'>
-						{/* <div className="top-container"> */}
-						{/* <h1>Archivos Sin Caos</h1> */}
-						{/* </div> */}
-					</header>
-
-					<div className="center-container">
-						<div className="left-center">
-							<div className="image-container">
-							</div>
-						</div>
-						<div className="right-center">
-							<div className="image-container">
-							</div>
-
-							<div className="login-container">
-								<div>
-									<form className='loginForm' onSubmit={login}>
-										<input
-											type="email"
-											onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} //save email info in hook. username is for python understanding
-											className={`formInput ${emailValid ? '' : 'invalidInput'}`} //apply styles when error message
-											placeholder='Correo eléctronico'
-											required
-										/>
-										<input
-											type='password'
-											onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}//save email info in hook. username is for python understanding
-											className={`formInput ${passwordValid ? '' : 'invalidInput'}`} //apply styles when error message
-											placeholder='Contraseña'
-										/>
-										<a href='#' className='forgot-pass'>¿Olvidaste tu contraseña?</a>
-										<button className="btn" type='submit'>Iniciar Sesión</button>
-										<button className="btn">Registrarse</button>
-									</form>
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-			</NavigationAndFooter>
-		</div>
+		<NavigationAndFooter>
+			<Flex align='center' justifyContent='space-evenly'>
+				<Image src= '/Office.jpg' alt='Secretary image' width='40%' display={{base :'none', sm: 'block'}}/>
+				<FormControl onSubmit={login} width='20%'>
+					<FormLabel>Correo</FormLabel>
+					<Input
+						onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} //save email info in hook. username is for python understanding
+						type='email' />
+					<FormLabel>Contraseña</FormLabel>
+					<Input
+						onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}//save password info in hook. username is for python understanding
+						type='password' />
+					<Button
+						mt={2}
+						colorScheme='teal'
+						type='submit'
+						width='100%'
+					>
+						Ingresar
+					</Button>
+				</FormControl>
+			</Flex>
+		</NavigationAndFooter>
 	)
 }
