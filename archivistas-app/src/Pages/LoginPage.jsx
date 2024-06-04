@@ -69,7 +69,7 @@ export default function LoginPage() {
 		<NavigationAndFooter>
 			<Flex align='center' py='35' pl='20'>
 				<Image src='/OficinistaFondoMorado.jpg' alt='Secretary image' display={{ base: 'none', sm: 'block' }} borderRadius='40' boxSize="sm" />
-				<Flex direction='column' bgColor='#000000' objectFit='cover'>
+				<Flex direction='column' bgColor='#000000' width='80%' wrap='wrap'>
 					<Heading
 						textAlign='center'
 						color='#000000'
