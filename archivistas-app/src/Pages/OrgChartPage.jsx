@@ -80,19 +80,17 @@ export default function OrgChartPage(){
     return (
         <div className="org-chart-page">
             <NavigationAndFooter>
-                {!dependencies.length ?<>How did you do this? :c</> :
                     <div className="org-chart-container">
                         <Tree 
                             lineWidth={'2px'}
                             lineColor={'rgb(203, 201, 201)'}
                             lineBorderRadius={'10px'}
                             className="node"
-                            label={create_node_label(dependencies[0].name)} 
+                            label={create_node_label(dependencies.name)} 
                         >
-                            {draw_node_children(dependencies[0])}
+                            {draw_node_children(dependencies)}
                         </Tree>
                     </div>
-                }
             </NavigationAndFooter>
         </div>
     )
