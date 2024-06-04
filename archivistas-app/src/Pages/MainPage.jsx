@@ -2,10 +2,23 @@ import { fetchToken } from "../Auth";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
-import Footer from "../universal/footer/Footer"
+import NavigationAndFooter from "../layout/NavigationAndFooter";
+import {
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    TableContainer,
+    Container,
+    Box,
+    Input,
+    Flex
+} from '@chakra-ui/react'
 
 
-export default function MainPage(){
+export default function MainPage() {
     const token = fetchToken();
     const navigate = useNavigate();
     const [projects, setProjects] = useState([])
@@ -15,10 +28,10 @@ export default function MainPage(){
 
     const instance = axios.create({
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
-      });    
+    });
 
     useEffect(() => {
         if (!token) {
@@ -26,12 +39,12 @@ export default function MainPage(){
             navigate("/")
         }
 
-        async function fetch_project_data(){
-            await instance.get(URL+URL_EXTENSION)
-            .then(response => {
-                setProjects(response.data)
-                console.log(response.data)
-            })
+        async function fetch_project_data() {
+            await instance.get(URL + URL_EXTENSION)
+                .then(response => {
+                    setProjects(response.data)
+                    console.log(response.data)
+                })
         }
         fetch_project_data()
     }, []);
@@ -45,62 +58,45 @@ export default function MainPage(){
     };
 
     return (<>
-        <div className="main-page">
-            <header className="app-header">
-                <div className="header-left-container">
-                </div>
-
-                <div className="header-right-container">
-                </div>
-            </header>
-            
-            <div className="main-page-content">
-                <div className="search-bar">
-                    <form>
-                        {showSearchIcon && <i className="fa fa-search" aria-hidden="true" />}
-                        <input 
-                            onChange= {e => handle_search_bar_change(e.target.value)}
-                            placeholder="Buscar"
-                            type="search"
-                            className="search-bar-input"
-                        />
-                        <button className="new-project-button">Nuevo Proyecto</button>
-                    </form>
-                    
-                </div>
-
-                <div className="project-section">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nombre del Proyecto</th>
-                                <th>Ultima Edición</th>
-                                <th>Propietario</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
+        <NavigationAndFooter>
+            <Flex>
+                <Input
+                    placeholder='Busca tu proyecto...'
+                    onChange={e => handle_search_bar_change(e.target.value)} 
+                    width='50%'
+                />
+            </Flex>
+            <Container minW='100%' minH="100vh" p='0'>
+                <Box textAlign="center" py={4} fontWeight="bold" textColor='#7f6bb0'>
+                    Selecciona tu proyecto
+                </Box>
+                <TableContainer>
+                    <Table variant='simple'>
+                        <Thead>
+                            <Tr>
+                                <Th>Nombre del proyecto</Th>
+                                <Th>Fecha de ultima edición</Th>
+                                <Th>Dueño</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
                             {projects.map(project =>
-                                <tr key={project.id}>
-                                    <td><label 
-                                            onClick={() => navigate(`/org_chart/${project.id}`)}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                        {project.name}
-                                        </label>
-                                    </td>
-
-                                    <td>{project.last_edition_date}</td>
-                                    <td>{project.owner.username}</td>
-                                    <td><i className="fa fa-ellipsis-v" aria-hidden="true" /></td>
-                                </tr>
+                                <Tr key={project.id}
+                                    transition={'background 0.3s ease'}
+                                    _hover={{
+                                        bg: '#b6a0e8'
+                                    }}>
+                                    <Td onClick={() => navigate(`/org_chart/${project.id}`)}
+                                        cursor='pointer'
+                                    >{project.name}</Td>
+                                    <Td>{project.last_edition_date}</Td>
+                                    <Td>{project.owner.username}</Td>
+                                </Tr>
                             )}
-                        </tbody>
-                    </table>
-                    <Footer />
-                </div>
-            </div>
-        </div>
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </Container>
+        </NavigationAndFooter>
     </>)
 }
