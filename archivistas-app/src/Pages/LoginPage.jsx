@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import axios from "axios"
 import NavigationAndFooter from '../layout/NavigationAndFooter'
+import SimpleSidebar from '../universal/sidebar/Sidebar'
 
 export default function LoginPage() {
 	const [count, setCount] = useState(0)
