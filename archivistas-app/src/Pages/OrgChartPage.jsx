@@ -10,7 +10,12 @@ import '../styles/OrgChart.css'
 
 export default function OrgChartPage(){
 
-    const [dependencies, setDependencies] = useState([])
+    const [dependencies, setDependencies] = useState({
+        id: -1,
+        name: "",
+        code: -1,
+        children: []
+    })
     const token = fetchToken();
     const {project_id} = useParams();
 
@@ -41,6 +46,8 @@ export default function OrgChartPage(){
         }
         fetch_dependencies_data() 
     }, []);
+
+    useEffect(() =>console.log(dependencies[0]),[dependencies])
 
     const create_node_label = name =>{
         return (
@@ -79,7 +86,7 @@ export default function OrgChartPage(){
 
     return (
         <div className="org-chart-page">
-            <NavigationAndFooter>
+                <NavigationAndFooter>
                     <div className="org-chart-container">
                         <Tree 
                             lineWidth={'2px'}
@@ -91,7 +98,7 @@ export default function OrgChartPage(){
                             {draw_node_children(dependencies)}
                         </Tree>
                     </div>
-            </NavigationAndFooter>
+                </NavigationAndFooter>
         </div>
     )
 }
