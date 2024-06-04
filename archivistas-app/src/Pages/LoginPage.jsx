@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import axios from "axios"
 import NavigationAndFooter from '../layout/NavigationAndFooter'
-import { Button, Flex, FormControl, FormHelperText, FormLabel, Image, Input } from '@chakra-ui/react'
+import { Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Image, Input, useBreakpointValue } from '@chakra-ui/react'
 
 export default function LoginPage() {
 	const [count, setCount] = useState(0)
@@ -67,26 +67,38 @@ export default function LoginPage() {
 
 	return (
 		<NavigationAndFooter>
-			<Flex align='center' justifyContent='space-evenly'>
-				<Image src= '/Office.jpg' alt='Secretary image' width='40%' display={{base :'none', sm: 'block'}}/>
-				<FormControl onSubmit={login} width='20%'>
-					<FormLabel>Correo</FormLabel>
-					<Input
-						onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} //save email info in hook. username is for python understanding
-						type='email' />
-					<FormLabel>Contraseña</FormLabel>
-					<Input
-						onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}//save password info in hook. username is for python understanding
-						type='password' />
-					<Button
-						mt={2}
-						colorScheme='teal'
-						type='submit'
-						width='100%'
+			<Flex align='center' py='35' pl='20'>
+				<Image src='/OficinistaFondoMorado.jpg' alt='Secretary image' display={{ base: 'none', sm: 'block' }} borderRadius='40' boxSize="sm" />
+				<Flex direction='column' bgColor='#000000' objectFit='cover'>
+					<Heading
+						textAlign='center'
+						color='#000000'
+						as={'h1'}
+						fontSize='20px'
 					>
-						Ingresar
-					</Button>
-				</FormControl>
+						El objetivo es tu archivo
+					</Heading>
+					<form onSubmit={login}>
+						<FormControl ml='100'>
+							<FormLabel>Correo</FormLabel>
+							<Input
+								onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} //save email info in hook. username is for python understanding
+								type='email' />
+							<FormLabel>Contraseña</FormLabel>
+							<Input
+								onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}//save password info in hook. username is for python understanding
+								type='password' />
+							<Button
+								mt={2}
+								colorScheme='teal'
+								type='submit'
+								width='100%'
+							>
+								Ingresar
+							</Button>
+						</FormControl>
+					</form>
+				</Flex>
 			</Flex>
 		</NavigationAndFooter>
 	)
