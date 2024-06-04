@@ -1,0 +1,11 @@
+.node label{
+    display: inline-block;
+    border: 1px solid rgb(203, 201, 201);
+    border-radius: 8px;
+    padding: 5px;
+} 
+
+.org-chart-container{
+    margin:30px;
+}
+
