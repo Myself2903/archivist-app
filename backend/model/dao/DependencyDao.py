@@ -95,3 +95,5 @@ def delete_dependency(db:Session, id_dependency: int):
     else:
         raise DeleteRootDependencyException()
     
+    print(dependency_db.project_id)
+    return get_dependencies_by_project(db=db, project_id=dependency_db.project_id)

@@ -13,4 +13,6 @@ class DependencyDB(Base):
     project = relationship("ProjectDB", back_populates="dependencies")
 
     father_id = Column(Integer, ForeignKey("dependencies.id"), nullable=True)
-    children = relationship("DependencyDB", backref=backref('father', remote_side=[id]))
+    children = relationship("DependencyDB", 
+                            backref=backref('father', remote_side=[id]),
+                            cascade="all, delete-orphan")

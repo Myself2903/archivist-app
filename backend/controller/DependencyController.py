@@ -11,6 +11,10 @@ router = APIRouter(prefix="/project/org_chart")
 def get_project_dependencies(project_id: int, db: Session = Depends(get_db)):
     return get_dependencies_by_project(db=db,project_id=project_id)
 
+@router.get("/dep", response_model=list[Dependency])
+def get__dependencies(db: Session = Depends(get_db)):
+    return get_dependencies(db=db)
+
 @router.post("/create")
 def create_new_dependency(
                         dependency: DependencyCreate,                         
@@ -63,10 +67,10 @@ def update_project_dependency(
         
     return dependency_db
 
-@router.delete("/delete", response_model=None)
+@router.delete("/delete", response_model=Dependency)
 def delete_project_dependency(id_dependency: int, db: Session = Depends(get_db)):
     try:
-        delete_dependency(db=db, id_dependency=id_dependency)
+        return delete_dependency(db=db, id_dependency=id_dependency)
 
     except NotFoundException as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="dependency not found")
@@ -75,6 +79,6 @@ def delete_project_dependency(id_dependency: int, db: Session = Depends(get_db))
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="cannot delete root dependency")
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
-    raise HTTPException(status_code=204, detail="dependency deleted")

@@ -12,7 +12,6 @@ import {
     useDisclosure,
     FormControl,
     Input,
-    FormLabel,
     Button,
     Modal,
     ModalOverlay,
@@ -27,6 +26,7 @@ export default function OrgChartPage(){
     
     const { isOpen: addIsOpen, onOpen: addOnOpen, onClose: addOnClose } = useDisclosure();
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
+    const [selectedNode, setSelectedNode] = useState(0)
     const initialRef = useRef(null)
 
     const [dependencies, setDependencies] = useState({
@@ -53,12 +53,10 @@ export default function OrgChartPage(){
 
     useEffect(() => {
         if (token){
-            console.log("token version")
             async function verify_project_access_token(){
 
                 await instance.get(URL + '/profile/projects/verify_access/token', {params: {project_id: project_id}})
                 .then(response => {
-                    console.log(response)
                     if (!response.data){
                         navigate("/")
                     }
@@ -68,7 +66,6 @@ export default function OrgChartPage(){
             verify_project_access_token()
         }else{
             async function verify_project_access(){
-                console.log("no token version")
                 await instance.get(URL + '/profile/projects/verify_access', {params: {project_id: project_id}})
                 .then(response => {
                     if (!response.data){
@@ -90,7 +87,8 @@ export default function OrgChartPage(){
     }, []);
 
 
-    const new_node_modal = () =>{
+    //Modal definition to create dependency
+    const AddDependencyModal = () =>{
         return(
             <Modal
                 initialFocusRef={initialRef}
@@ -101,23 +99,45 @@ export default function OrgChartPage(){
                 <ModalContent>
                 <ModalHeader>Crear nueva dependencia</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody pb={6}>
-                    <FormControl>
-                    <Input ref={initialRef} placeholder='Nombre' />
-                    </FormControl>
-                </ModalBody>
 
-                <ModalFooter>
-                    <Button onClick={addOnClose} mr={3}>Cancelar</Button>
-                    <Button colorScheme='purple' >
-                    Crear
-                    </Button>
-                </ModalFooter>
+                <form onSubmit={() => create_new_node(initialRef.current.value)}>
+                    <ModalBody pb={6}>
+                        <FormControl>
+                        <Input ref={initialRef} placeholder='Nombre' />
+                        </FormControl>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button onClick={addOnClose} mr={3}>Cancelar</Button>
+                        <Button colorScheme='purple' type="submit">
+                        Crear
+                        </Button>
+                    </ModalFooter>
+                </form>
+                
                 </ModalContent>
             </Modal>
     )}
 
-    const delete_node_modal = () =>{
+
+    const create_new_node = async (dependency_name) =>{
+        const dependency = {
+            name: dependency_name,
+            code: 101,
+            project_id: project_id,
+            father_id: selectedNode.id,
+        }
+        
+        await instance.post(URL+URL_EXTENSION+"/create", dependency)
+        .then(response => {
+            selectedNode.children.push(response.data)
+        })
+
+        addOnClose()
+    }
+
+    //Modal definition to delete dependency
+    const DeleteDependencyModal  = () =>{
         return(
             <Modal
                 isOpen={deleteIsOpen}
@@ -133,7 +153,7 @@ export default function OrgChartPage(){
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={deleteOnClose} mr={3}>Cancelar</Button>
-                    <Button colorScheme='red' >
+                    <Button colorScheme='red' onClick={() => delete_node()}>
                     Eliminar
                     </Button>
                 </ModalFooter>
@@ -141,7 +161,17 @@ export default function OrgChartPage(){
             </Modal>
     )}
 
-    const create_node_label = name =>{
+    const delete_node = async () =>{
+        // console.log(selectedNode)
+        await instance.delete(URL+URL_EXTENSION+"/delete", {params:{id_dependency: selectedNode.id}})
+        .then(response => {
+            setDependencies(response.data)
+        })
+        deleteOnClose()
+    }
+
+    //node data in org_chart
+    const create_node_label = node =>{
         return (
                 <div className="node-container">
                     <IconButton
@@ -151,10 +181,12 @@ export default function OrgChartPage(){
                         bg="transparent"
                         color="red"
                         size="xs"
-                        onClick={deleteOnOpen}
-                    />
-                    {delete_node_modal()}                    
-                    <label>{name} </label>
+                        onClick={()=>{
+                            deleteOnOpen() 
+                            setSelectedNode(node)
+                        }}
+                    />              
+                    <label>{node.name} </label>
                     <IconButton
                         className="add-button"
                         aria-label="Add"
@@ -162,9 +194,11 @@ export default function OrgChartPage(){
                         bg="transparent"
                         color="green"
                         size="xs"
-                        onClick={addOnOpen}
+                        onClick={() => {
+                            addOnOpen() 
+                            setSelectedNode(node)
+                        }}
                     />
-                    {new_node_modal()}
                 </div>
         )}
 
@@ -172,8 +206,9 @@ export default function OrgChartPage(){
     const draw_node_children = node =>{
         return node.children.map(child => (
             <TreeNode 
+                key={child.id}
                 className="node"
-                label={create_node_label(child.name)} 
+                label={create_node_label(child)} 
             >
                 {child.children ? draw_node_children(child): null}
             </TreeNode>
@@ -189,11 +224,13 @@ export default function OrgChartPage(){
                             lineColor={'rgb(203, 201, 201)'}
                             lineBorderRadius={'10px'}
                             className="root"
-                            label={create_node_label(dependencies.name)} 
+                            label={create_node_label(dependencies)} 
                         >
                             {draw_node_children(dependencies)}
                         </Tree>
                     </div>
+                    <DeleteDependencyModal />   
+                    <AddDependencyModal />
                 </NavigationAndFooter>
         </div>
     )

@@ -11,6 +11,7 @@ class DependencyCreate(DependencyBase):
 
 class Dependency(DependencyBase):
     id: int
+    project_id:int
     children: List['Dependency'] = []
 
     class Config:
