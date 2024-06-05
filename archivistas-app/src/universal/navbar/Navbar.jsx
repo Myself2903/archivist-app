@@ -3,9 +3,8 @@ import React from 'react'
 import SimpleSidebar from '../sidebar/Sidebar'
 import { useNavigate } from 'react-router-dom';
 
-export default function Navbar(logo_url_redirect, show_menu) {
-	const navigate = useNavigate();
-
+export default function Navbar({logo_url_redirect, show_menu}) {
+	const navigate = useNavigate();	
 	return (
 		<div>
 			<Flex flex={{ base: 1 }} justify={'start'} bgColor='#7f6bb0' minH={'60px'} px={{ base: '30px', lg: '40px' }} align={'center'}>
@@ -29,7 +28,6 @@ export default function Navbar(logo_url_redirect, show_menu) {
 					</Center>
 				</Link>
 				<Spacer />
-				{console.log(show_menu)}
 				{show_menu ? <SimpleSidebar/>: <></>}
 			</Flex>
 		</div>

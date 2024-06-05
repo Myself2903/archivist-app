@@ -101,7 +101,6 @@ export default function OrgChartPage(){
 
                 await instance.get(URL + '/profile/projects/verify_access/token', {params: {project_id: project_id}})
                 .then(response => {
-                    console.log(response)
                     if (response.data.owner){
                         setIsOwner(true)
                     }else if(!response.data.public_access){
@@ -138,6 +137,7 @@ export default function OrgChartPage(){
 
     //Modal definition to create dependency
     const AddDependencyModal = () =>{
+
         return(
             <Modal
                 initialFocusRef={initialRef}
@@ -168,29 +168,25 @@ export default function OrgChartPage(){
             </Modal>
     )}
 
-
-    const create_new_node = async (event, dependency_name) =>{
-        event.preventDefault();
+    const create_new_node = async (event, dependency_name) => {
+        // event.preventDefault();
         const dependency = {
             name: dependency_name,
-            code: 101,
             project_id: project_id,
             father_id: selectedNode.id,
         }
-        addOnClose()
+        await instance.post(URL + URL_EXTENSION + "/create", dependency)
+            .then(response => {
+                setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
+            });
         
-        await instance.post(URL+URL_EXTENSION+"/create", dependency)
-        .then(response => {
-            setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
-                .then(()=>set_dependencies_with_codes(dependencies))
-            
-        })
-        
-        
+        addOnClose();            
     }
+    
 
     //Modal definition to delete dependency
     const DeleteDependencyModal  = () =>{
+        
         return(
             <Modal
                 isOpen={deleteIsOpen}
