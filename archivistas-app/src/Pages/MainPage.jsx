@@ -229,8 +229,7 @@ export default function MainPage() {
                                     <Td>{project.owner.username}</Td>
                                     <Td>
                                         <Flex gap='10'>
-                                            <FaPen cursor='pointer' />
-                                            <EditProjectModal onClick={() => openEditModal(project)}/>
+                                            <FaPen cursor='pointer'  onClick={() => openEditModal(project)}/>
                                             <FaRegTrashAlt cursor='pointer' />
                                         </Flex>
                                     </Td>
@@ -240,6 +239,7 @@ export default function MainPage() {
                     </Table>
                 </TableContainer>
             </Container>
+            <EditProjectModal/>
         </NavigationAndFooter>
     </>)
 }

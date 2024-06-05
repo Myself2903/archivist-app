@@ -47,27 +47,41 @@ export default function SimpleSidebar() {
 }
 
 const SidebarContent = ({ onClose }) => {
+    const navigate = useNavigate();
+    
+    const logout = async () => {
+        const token = fetchToken();
+        const instance = axios.create({
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        const URL = "http://127.0.0.1:8000";
+
+        await instance.put(URL+"/logout")
+            .then(response => {
+                localStorage.removeItem('auth_token');
+                navigate("/")
+            })        
+    }
 
     const Items = [
         {
             id: 1,
-            name: 'home',
-            button_type:'nav',
-            href: '/main_page',
+            name: 'Home',
+            onClick: () => navigate('/main_page'),
             icon: FiHome 
         },
         {
             id: 2,
-            name: 'Registrarse',
-            href: '#',
-            button_type:'nav',
+            name: 'Editar Perfil',
             icon: AiOutlineUsergroupAdd
         },
         {
             id: 3,
             name: 'Cerrar sesión',
-            href: '#',
-            button_type:'logout',
+            onClick: logout,
             icon: AiOutlineLogout
         }
     ]
@@ -86,7 +100,7 @@ const SidebarContent = ({ onClose }) => {
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
             {Items.map((link) => (
-                <NavItem key={link.name} icon={link.icon} href={link.href} button_type={link.button_type}>
+                <NavItem key={link.name} icon={link.icon} click_handler={link.onClick}>
                     {link.name}
                 </NavItem>
             ))}
@@ -95,32 +109,14 @@ const SidebarContent = ({ onClose }) => {
 };
 
 
-const NavItem = ({ icon, children, href, button_type }) => {
-    const navigate = useNavigate();
-
-    const logout = async () => {
-        const token = fetchToken();
-        const instance = axios.create({
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        });
-        const URL = "http://127.0.0.1:8000";
-
-        await instance.put(URL+"/logout")
-            .then(response => {
-                localStorage.removeItem('auth_token');
-                navigate("/")
-            })        
-    }
+const NavItem = ({ icon, children, click_handler }) => {
 
     return (
         <Link 
-            // href={href} 
+            
             style={{ textDecoration: 'none' }} 
             _focus={{ boxShadow: 'none' }}
-            onClick={button_type === "logout" ? logout : ()=> navigate(href)}
+            onClick={click_handler}
             >
             <Flex
                 align="center"
@@ -132,6 +128,7 @@ const NavItem = ({ icon, children, href, button_type }) => {
                 _hover={{
                     bg: '#7f6bb0',
                     color: 'white',
+                    cursor: 'pointer'
                 }}
             >
                 {icon && (
