@@ -79,7 +79,7 @@ export default function LoginPage() {
 
 
   return (
-    <NavigationAndFooter>
+    <NavigationAndFooter logo_url_redirect="/" show_menu={false}>
       <Flex align="center" py="35" flexWrap="wrap" justifyContent="center">
         {!isSmallScreen && (
           <Image

@@ -149,7 +149,7 @@ export default function OrgChartPage(){
                 <ModalHeader>Crear nueva dependencia</ModalHeader>
                 <ModalCloseButton />
 
-                <form onSubmit={() => create_new_node(initialRef.current.value)}>
+                <form onSubmit={(e) => create_new_node(e,initialRef.current.value)}>
                     <ModalBody pb={6}>
                         <FormControl>
                         <Input ref={initialRef} placeholder='Nombre' />
@@ -169,20 +169,24 @@ export default function OrgChartPage(){
     )}
 
 
-    const create_new_node = async (dependency_name) =>{
+    const create_new_node = async (event, dependency_name) =>{
+        event.preventDefault();
         const dependency = {
             name: dependency_name,
             code: 101,
             project_id: project_id,
             father_id: selectedNode.id,
         }
+        addOnClose()
         
         await instance.post(URL+URL_EXTENSION+"/create", dependency)
         .then(response => {
-            selectedNode.children.push(response.data)
+            setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
+                .then(()=>set_dependencies_with_codes(dependencies))
+            
         })
-
-        addOnClose()
+        
+        
     }
 
     //Modal definition to delete dependency

@@ -1,12 +1,15 @@
 import { Box, Center, Flex, Heading, Image, Link, Spacer, useBreakpointValue } from '@chakra-ui/react'
 import React from 'react'
 import SimpleSidebar from '../sidebar/Sidebar'
+import { useNavigate } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar(logo_url_redirect, show_menu) {
+	const navigate = useNavigate();
+
 	return (
 		<div>
 			<Flex flex={{ base: 1 }} justify={'start'} bgColor='#7f6bb0' minH={'60px'} px={{ base: '30px', lg: '40px' }} align={'center'}>
-				<Link to="/">
+				<Link to="/" onClick={() => navigate(logo_url_redirect)}>
 					<Center>
 						<Image
 							src="/Garrido.jpg"
@@ -26,7 +29,8 @@ export default function Navbar() {
 					</Center>
 				</Link>
 				<Spacer />
-				<SimpleSidebar/>
+				{console.log(show_menu)}
+				{show_menu ? <SimpleSidebar/>: <></>}
 			</Flex>
 		</div>
 	)
