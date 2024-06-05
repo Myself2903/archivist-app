@@ -38,12 +38,7 @@ export default function MainPage() {
     const [projects, setProjects] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProjects, setFilteredProjects] = useState(projects);
-<<<<<<< HEAD
-    
-=======
-    const [editForm, setEditForm] = useState({ name: '', enterprise: '', public_access: '' });
     const [deleteForm, setDeleteForm] = useState({ id_project: '' });
->>>>>>> 23898e75095bd9379d97eb9c34284a673d93c78c
     const URL = "http://127.0.0.1:8000"
     const URL_EXTENSION = "/profile/projects/active_state", URL_EXTENSION_PROJECTS = "/profile/projects"
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
@@ -115,10 +110,13 @@ export default function MainPage() {
                     <form onSubmit={createProject}>
                         <ModalBody pb={6}>
                             <FormControl>
-                                <Input placeholder='Nombre' onChange={e => setCreateForm({ ...createForm, name: e.target.value })} />
-                                <Input placeholder='Empresa' onChange={e => setCreateForm({ ...createForm, enterprise: e.target.value })}
+                                <FormLabel>Nombre:</FormLabel>
+                                <Input placeholder='Nombre' isRequired onChange={e => setCreateForm({ ...createForm, name: e.target.value })} />
+                                <FormLabel>Empresa:</FormLabel>
+                                <Input placeholder='Empresa' isRequired onChange={e => setCreateForm({ ...createForm, enterprise: e.target.value })}
                                 />
-                                <Select placeholder='Visibilidad' onChange={e => setCreateForm({ ...createForm, public_access: e.target.value })}>
+                                <FormLabel>Visibilidad:</FormLabel>
+                                <Select placeholder='Visibilidad' isRequired onChange={e => setCreateForm({ ...createForm, public_access: e.target.value })}>
                                     <option value={true}>Público</option>
                                     <option value={false}>Privado</option>
                                 </Select>
@@ -185,18 +183,18 @@ export default function MainPage() {
                         <ModalBody pb={6}>
                             <FormControl>
                                 <FormLabel>Nombre:</FormLabel>
-                                <Input placeholder='Nombre' onChange={(e) =>
+                                <Input placeholder='Nombre' isRequired onChange={(e) =>
                                     setEditForm({ ...editForm, name: e.target.value })
                                 }
                                     value={editForm.name} />
                                 <FormLabel>Empresa:</FormLabel>
-                                <Input placeholder='Empresa' onChange={(e) =>
+                                <Input placeholder='Empresa' isRequired onChange={(e) =>
                                     setEditForm({ ...editForm, enterprise: e.target.value })
                                 }
                                     value={editForm.enterprise} />
                                 
                                 <FormLabel>Visibilidad:</FormLabel>
-                                <Select placeholder='Visibilidad' onChange={(e) =>
+                                <Select placeholder='Visibilidad' isRequired onChange={(e) =>
                                     setEditForm({ ...editForm, public_access: e.target.value })
                                 }
                                     value={editForm.public_access}>
@@ -228,7 +226,10 @@ export default function MainPage() {
     const deleteProject = async (event) => {
         event.preventDefault();
         console.log(deleteForm)
-        await instance.delete(URL + URL_EXTENSION_PROJECTS + "/delete", deleteForm);
+        await instance.delete(URL + URL_EXTENSION_PROJECTS + "/delete?id_project="+deleteForm.id_project)
+            .then(response => {
+                setProjects(projects.filter(project => project.id != deleteForm.id_project))
+            });
         onDeleteClose();
     }
 
@@ -297,7 +298,7 @@ export default function MainPage() {
                                     <Td>
                                         <Flex gap='10'>
                                             <FaPen cursor='pointer'  onClick={() => {setSelectedProject(project); onEditOpen();}}/>
-                                            <FaRegTrashAlt cursor='pointer' />
+                                            <FaRegTrashAlt cursor='pointer'  onClick={() => {openDeleteModal(project.id)}}/>
                                         </Flex>
                                     </Td>
                                 </Tr>

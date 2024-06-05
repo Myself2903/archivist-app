@@ -11,6 +11,8 @@ import {
     IconButton,
     useDisclosure,
     FormControl,
+    FormHelperText,
+    FormErrorMessage,
     Input,
     Button,
     Modal,
@@ -135,9 +137,32 @@ export default function OrgChartPage() {
         fetch_dependencies_data()
     }, []);
 
-
+    
     //Modal definition to create dependency
     const AddDependencyModal = () =>{
+        const create_new_node = async (event, dependency_name) => {
+            event.preventDefault();
+            const dependency = {
+                name: dependency_name,
+                project_id: project_id,
+                father_id: selectedNode.id,
+            }
+    
+            if(dependency.name.trim() != ""){
+                await instance.post(URL + URL_EXTENSION + "/create", dependency)
+                .then(response => {
+                    setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
+                });
+                setNameError(false);
+               addOnClose();    
+               window.location.reload();
+            }else{
+                setNameError(true);
+            }
+            
+        }
+
+        const [nameError, setNameError] = useState(false);
 
         return(
             <Modal
@@ -152,30 +177,30 @@ export default function OrgChartPage() {
 
                 <form onSubmit={(e) => create_new_node(e,initialRef.current.value)}>
                     <ModalBody pb={6}>
-                        <FormControl>
-                        <Input ref={initialRef} placeholder='Nombre' />
+                        <FormControl isInvalid={nameError}>
+                        <Input ref={initialRef} placeholder='Nombre'/>
+                        {!nameError ? (
+                            <FormHelperText>
+                            Ingresa el nombre de la nueva dependencia
+                            </FormHelperText>
+                        ) : (
+                            <FormErrorMessage>El nombre es obligatorio.</FormErrorMessage>
+                        )}
                         </FormControl>
                     </ModalBody>
+                    <ModalFooter>
+                            <Button onClick={addOnClose} mr={3}>Cancelar</Button>
+                            <Button colorScheme='purple' type="submit">
+                                Crear
+                            </Button>
+                    </ModalFooter>
                 </form>
                 </ModalContent>
             </Modal>
         )
     }
 
-    const create_new_node = async (event, dependency_name) => {
-        // event.preventDefault();
-        const dependency = {
-            name: dependency_name,
-            project_id: project_id,
-            father_id: selectedNode.id,
-        }
-        await instance.post(URL + URL_EXTENSION + "/create", dependency)
-            .then(response => {
-                setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
-            });
-        
-        addOnClose();            
-    }
+    
     
 
     //Modal definition to delete dependency
