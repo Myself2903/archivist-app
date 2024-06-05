@@ -38,11 +38,17 @@ export default function MainPage() {
     const [projects, setProjects] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProjects, setFilteredProjects] = useState(projects);
+<<<<<<< HEAD
     
+=======
+    const [editForm, setEditForm] = useState({ name: '', enterprise: '', public_access: '' });
+    const [deleteForm, setDeleteForm] = useState({ id_project: '' });
+>>>>>>> 23898e75095bd9379d97eb9c34284a673d93c78c
     const URL = "http://127.0.0.1:8000"
     const URL_EXTENSION = "/profile/projects/active_state", URL_EXTENSION_PROJECTS = "/profile/projects"
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
     const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
 
     const instance = axios.create({
         headers: {
@@ -79,7 +85,7 @@ export default function MainPage() {
         setSearchQuery(e.target.value);
     };
 
-    
+
 
 
 
@@ -89,14 +95,14 @@ export default function MainPage() {
             enterprise: '',
             public_access: ''
         });
-        
+
         const createProject = async (event) => {
             event.preventDefault();
             await instance.post(URL + URL_EXTENSION_PROJECTS + "/create", createForm)
-            .then(response =>  navigate(`/org_chart/${response.data.id}`));
+                .then(response => navigate(`/org_chart/${response.data.id}`));
             onCreateClose();
         }
-        
+
         return (
             <Modal
                 isOpen={isCreateOpen}
@@ -112,7 +118,7 @@ export default function MainPage() {
                                 <Input placeholder='Nombre' onChange={e => setCreateForm({ ...createForm, name: e.target.value })} />
                                 <Input placeholder='Empresa' onChange={e => setCreateForm({ ...createForm, enterprise: e.target.value })}
                                 />
-                                <Select placeholder='Visibilidad' onChange={e =>setCreateForm({ ...createForm, public_access: e.target.value })}>
+                                <Select placeholder='Visibilidad' onChange={e => setCreateForm({ ...createForm, public_access: e.target.value })}>
                                     <option value={true}>Público</option>
                                     <option value={false}>Privado</option>
                                 </Select>
@@ -212,6 +218,43 @@ export default function MainPage() {
         )
     }
 
+    const openDeleteModal = (id_project) => {
+        setDeleteForm({
+            id_project: id_project
+        });
+        onDeleteOpen();
+    }
+
+    const deleteProject = async (event) => {
+        event.preventDefault();
+        console.log(deleteForm)
+        await instance.delete(URL + URL_EXTENSION_PROJECTS + "/delete", deleteForm);
+        onDeleteClose();
+    }
+
+    const DeleteProjectModal = () => {
+        return (
+            <Modal
+                isOpen={isDeleteOpen}
+                onClose={onDeleteClose}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Está seguro de querer eliminar el proyecto?</ModalHeader>
+                    <ModalCloseButton/>
+                    <form onSubmit={deleteProject}>
+                        <ModalFooter>
+                            <Button onClick={onDeleteClose} mr={3}>Cancelar</Button>
+                            <Button colorScheme='red' type='submit'>
+                                Eliminar
+                            </Button>
+                        </ModalFooter>
+                    </form>
+                </ModalContent>
+            </Modal>
+        )
+    }
+
     return (<>
         <NavigationAndFooter>
             <Flex pl='10' alignItems='center'>
@@ -263,7 +306,8 @@ export default function MainPage() {
                     </Table>
                 </TableContainer>
             </Container>
-            <EditProjectModal/>
+            <EditProjectModal />
+            <DeleteProjectModal />
         </NavigationAndFooter>
     </>)
 }
