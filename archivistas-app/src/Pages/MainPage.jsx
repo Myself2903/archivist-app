@@ -25,6 +25,7 @@ import {
     ModalFooter,
     ModalBody,
     FormControl,
+    FormLabel,
     Button,
     useDisclosure,
     Select
@@ -37,7 +38,7 @@ export default function MainPage() {
     const [projects, setProjects] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProjects, setFilteredProjects] = useState(projects);
-    const [editForm, setEditForm] = useState({ name: '', enterprise: '', public_access: '' });
+    
     const URL = "http://127.0.0.1:8000"
     const URL_EXTENSION = "/profile/projects/active_state", URL_EXTENSION_PROJECTS = "/profile/projects"
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
@@ -130,22 +131,41 @@ export default function MainPage() {
         )
     }
 
-    const openEditModal = (project) => {
-        setEditForm({
-            name: project.name,
-            enterprise: project.enterprise,
-            public_access: project.public_access
-        });
-        onEditOpen();
-    };
+    
 
-    const editProject = async (event) => {
-        event.preventDefault();
-        await instance.put(URL + URL_EXTENSION_PROJECTS + "/update", editForm);
-        onEditClose();
-    }
+    const [selectedProject, setSelectedProject] = useState({id:-1, name: '', enterprise: '', public_access: '' })
 
     const EditProjectModal = () => {
+        const [editForm, setEditForm] = useState({ name: '', enterprise: '', public_access: '' });
+
+        useEffect(
+            () =>{
+                setEditForm(selectedProject)
+            },[selectedProject])
+        
+
+        const editProject = async (event) => {
+            event.preventDefault();
+            let query_params = {
+                current_project_id: selectedProject.id
+            }
+
+            await instance.put(URL + URL_EXTENSION_PROJECTS + "/update?current_project_id="+selectedProject.id,
+                // { params:{ query_params } },
+                editForm
+            ).then((response)=>{
+                const updatedProjects = projects.map(project =>{
+                    if(project.id == selectedProject.id){
+                        return { ...project, ...editForm };
+                    }
+                    return project;
+                })
+                setProjects(updatedProjects)
+            });
+            onEditClose();
+        }  
+
+            
         return (
             <Modal
                 isOpen={isEditOpen}
@@ -158,14 +178,18 @@ export default function MainPage() {
                     <form onSubmit={editProject}>
                         <ModalBody pb={6}>
                             <FormControl>
+                                <FormLabel>Nombre:</FormLabel>
                                 <Input placeholder='Nombre' onChange={(e) =>
                                     setEditForm({ ...editForm, name: e.target.value })
                                 }
                                     value={editForm.name} />
+                                <FormLabel>Empresa:</FormLabel>
                                 <Input placeholder='Empresa' onChange={(e) =>
                                     setEditForm({ ...editForm, enterprise: e.target.value })
                                 }
                                     value={editForm.enterprise} />
+                                
+                                <FormLabel>Visibilidad:</FormLabel>
                                 <Select placeholder='Visibilidad' onChange={(e) =>
                                     setEditForm({ ...editForm, public_access: e.target.value })
                                 }
@@ -179,7 +203,7 @@ export default function MainPage() {
                         <ModalFooter>
                             <Button onClick={onEditClose} mr={3}>Cancelar</Button>
                             <Button colorScheme='purple' type='submit'>
-                                Crear
+                                Actualizar
                             </Button>
                         </ModalFooter>
                     </form>
@@ -211,7 +235,7 @@ export default function MainPage() {
                             <Tr>
                                 <Th>Nombre del proyecto</Th>
                                 <Th>Fecha de ultima edición</Th>
-                                <Th>Dueño</Th>
+                                <Th>Empresa</Th>
                                 <Th>Opciones</Th>
                             </Tr>
                         </Thead>
@@ -226,10 +250,10 @@ export default function MainPage() {
                                         cursor='pointer'
                                     >{project.name}</Td>
                                     <Td>{format(new Date(project.last_edition_date), 'MM/dd/yyyy')}</Td>
-                                    <Td>{project.owner.username}</Td>
+                                    <Td>{project.enterprise}</Td>
                                     <Td>
                                         <Flex gap='10'>
-                                            <FaPen cursor='pointer'  onClick={() => openEditModal(project)}/>
+                                            <FaPen cursor='pointer'  onClick={() => {setSelectedProject(project); onEditOpen();}}/>
                                             <FaRegTrashAlt cursor='pointer' />
                                         </Flex>
                                     </Td>
