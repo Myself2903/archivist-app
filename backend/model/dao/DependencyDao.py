@@ -59,7 +59,8 @@ def update_dependency(db: Session, current_dependency_id:int, dependency_update:
     
     update_data = dependency_update.model_dump(exclude_unset=True)
     dependency_db = get_dependency(db, current_dependency_id)
-    
+    if not dependency_db:
+        raise NotFoundException("dependency not found")
     try:
         #avoid self reference error
         if update_data["father_id"] == dependency_db.id:
@@ -72,7 +73,7 @@ def update_dependency(db: Session, current_dependency_id:int, dependency_update:
         )
     except KeyError as e:
         pass
-
+    
     for key, value in update_data.items():
             setattr(dependency_db, key, value)
 

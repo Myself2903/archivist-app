@@ -29,9 +29,11 @@ export default function OrgChartPage() {
 
     const { isOpen: addIsOpen, onOpen: addOnOpen, onClose: addOnClose } = useDisclosure();
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
+    const { isOpen: editIsOpen, onOpen: editOnOpen, onClose: editOnClose } = useDisclosure();
     const [selectedNode, setSelectedNode] = useState(0)
     const [isOwner, setIsOwner] = useState(false)
     const initialRef = useRef(null)
+    const initialRefEdit = useRef(null)
 
     const [dependencies, setDependencies] = useState({
         id: -1,
@@ -137,7 +139,69 @@ export default function OrgChartPage() {
         fetch_dependencies_data()
     }, []);
 
-    
+    const EditDependencyModal = () => {
+        const [nameError, setNameError] = useState(false);
+
+        const edit_node = async (event, dependency_name) => {
+            event.preventDefault();
+            const dependency = {
+                name: dependency_name,
+                project_id: project_id,
+                father_id: selectedNode.id,
+            }
+            console.log(selectedNode.id)
+            
+            if(dependency.name.trim() != ""){
+                await instance.put(URL + URL_EXTENSION + "update?current_dependency_id="+selectedNode.id)
+                .then(response => {
+                    setSelectedNode({...selectedNode, name: response.data.name})
+                });
+                setNameError(false);
+               addOnClose();    
+            //    window.location.reload();
+            }else{
+                setNameError(true);
+            }
+            
+        }
+        return(
+            <Modal
+                initialFocusRef={initialRefEdit}
+                isOpen={editIsOpen}
+                onClose={editOnClose}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Editar dependencia</ModalHeader>
+                    <ModalCloseButton />
+
+                <form onSubmit={(e) => edit_node(e,initialRefEdit.current.value)}>
+                    <ModalBody pb={6}>
+                        <FormControl isInvalid={nameError}>
+                        <Input ref={initialRefEdit} placeholder='Nombre'/>
+                        {!nameError ? (
+                            <FormHelperText>
+                            Ingresa el nuevo nombre de la dependencia
+                            </FormHelperText>
+                        ) : (
+                            <FormErrorMessage>El nombre es obligatorio.</FormErrorMessage>
+                        )}
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                            <Button onClick={editOnClose} mr={3}>Cancelar</Button>
+                            <Button colorScheme='purple' type="submit">
+                                Crear
+                            </Button>
+                    </ModalFooter>
+                </form>
+                </ModalContent>
+            </Modal>
+        )
+    }
+
+
+
     //Modal definition to create dependency
     const AddDependencyModal = () =>{
         const create_new_node = async (event, dependency_name) => {
@@ -257,7 +321,14 @@ export default function OrgChartPage() {
                                 setSelectedNode(node)
                             }}
                         />
-                        <label>{node.name}<b> | {node.code} </b></label>
+                        <label onDoubleClick={()=> {
+                                editOnOpen()
+                                setSelectedNode(node)
+                                console.log("sexo")
+                            }}
+                        >
+                            {node.name}<b> | {node.code} </b>
+                        </label>
                         <IconButton
                             className="add-button"
                             aria-label="Add"
@@ -317,6 +388,7 @@ export default function OrgChartPage() {
                 </Container>
                 <DeleteDependencyModal />
                 <AddDependencyModal />
+                <EditDependencyModal />
             </NavigationAndFooter>
         </div>
     )

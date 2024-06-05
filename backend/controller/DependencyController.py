@@ -57,7 +57,7 @@ def update_project_dependency(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="cannot create multiple root dependencies")
     
     except NotFoundException as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Father dependency not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="dependency not found")
     
     except SelfDependenceException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Self reference in father_id")
