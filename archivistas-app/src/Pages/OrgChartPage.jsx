@@ -27,6 +27,7 @@ export default function OrgChartPage(){
     const { isOpen: addIsOpen, onOpen: addOnOpen, onClose: addOnClose } = useDisclosure();
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
     const [selectedNode, setSelectedNode] = useState(0)
+    const [isOwner, setIsOwner] = useState(false)
     const initialRef = useRef(null)
 
     const [dependencies, setDependencies] = useState({
@@ -49,7 +50,50 @@ export default function OrgChartPage(){
           'Authorization': 'Bearer ' + token
         }
       });    
+    
+    const calculateDepth = (node, level) => {
+        if (node.children.length === 0 ){
+            return level
+        }   
+        
+        let lvls = []
+        for (let i=0; i<node.children.length; i++){
+            lvls.push(calculateDepth(node.children[i], level+1))
+        }
+        return Math.max(...lvls);
+    }
 
+    const gen_dependencies_code = (node, father_code, depth) =>{        
+        let new_children = []
+        let current_level = father_code.length+1
+        let sorted_children = node.children.sort()
+
+        for(let i=0;i<sorted_children.length ;i++){
+            let code = father_code+String(i+1)
+            let current_child = sorted_children[i]
+
+            current_child.code = code + "0".repeat(depth-current_level)
+
+            current_child.children = gen_dependencies_code(current_child, code, depth)
+            new_children.push(current_child)
+        }
+        
+        return new_children
+    }
+
+
+    const set_dependencies_with_codes = (dep) =>{
+        let depth = calculateDepth(dep, 1)
+  
+        setDependencies(prevState =>({
+            ...dep,
+            code: "1"+ "0".repeat(depth-1),
+            children: gen_dependencies_code(dep, "1", depth)
+        }))
+        
+        
+    }
+    
 
     useEffect(() => {
         if (token){
@@ -57,9 +101,13 @@ export default function OrgChartPage(){
 
                 await instance.get(URL + '/profile/projects/verify_access/token', {params: {project_id: project_id}})
                 .then(response => {
-                    if (!response.data){
+                    console.log(response)
+                    if (response.data.owner){
+                        setIsOwner(true)
+                    }else if(!response.data.public_access){
                         navigate("/")
                     }
+
                 })
             }
             
@@ -68,7 +116,7 @@ export default function OrgChartPage(){
             async function verify_project_access(){
                 await instance.get(URL + '/profile/projects/verify_access', {params: {project_id: project_id}})
                 .then(response => {
-                    if (!response.data){
+                    if (!response.data.public_access){
                         navigate("/")
                     }
                 })
@@ -80,7 +128,8 @@ export default function OrgChartPage(){
         async function fetch_dependencies_data(){
             await instance.get(URL+URL_EXTENSION, { params: {project_id: project_id} })
             .then(response => {
-                setDependencies(response.data)
+                // setDependencies(response.data)
+                set_dependencies_with_codes(response.data)
             })
         }
         fetch_dependencies_data() 
@@ -165,7 +214,7 @@ export default function OrgChartPage(){
         // console.log(selectedNode)
         await instance.delete(URL+URL_EXTENSION+"/delete", {params:{id_dependency: selectedNode.id}})
         .then(response => {
-            setDependencies(response.data)
+            set_dependencies_with_codes(response.data)
         })
         deleteOnClose()
     }
@@ -174,31 +223,36 @@ export default function OrgChartPage(){
     const create_node_label = node =>{
         return (
                 <div className="node-container">
-                    <IconButton
-                        className="delete-button"
-                        aria-label="Delete"
-                        icon={<MinusIcon boxSize={3}/>}
-                        bg="transparent"
-                        color="red"
-                        size="xs"
-                        onClick={()=>{
-                            deleteOnOpen() 
-                            setSelectedNode(node)
-                        }}
-                    />              
-                    <label>{node.name} </label>
-                    <IconButton
-                        className="add-button"
-                        aria-label="Add"
-                        icon={<AddIcon boxSize={3}/>}
-                        bg="transparent"
-                        color="green"
-                        size="xs"
-                        onClick={() => {
-                            addOnOpen() 
-                            setSelectedNode(node)
-                        }}
+                    {isOwner ? (
+                    <>
+                        <IconButton
+                            className="delete-button"
+                            aria-label="Delete"
+                            icon={<MinusIcon boxSize={3}/>}
+                            bg="transparent"
+                            color="red"
+                            size="xs"
+                            onClick={()=>{
+                                deleteOnOpen() 
+                                setSelectedNode(node)
+                            }}
+                        />              
+                        <label>{node.name}<b> | {node.code} </b></label>
+                        <IconButton
+                            className="add-button"
+                            aria-label="Add"
+                            icon={<AddIcon boxSize={3}/>}
+                            bg="transparent"
+                            color="green"
+                            size="xs"
+                            onClick={() => {
+                                addOnOpen() 
+                                setSelectedNode(node)
+                            }}                    
                     />
+                    </>):(
+                        <label>{node.name}<b> | {node.code} </b></label>
+                    )}
                 </div>
         )}
 
