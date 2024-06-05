@@ -101,7 +101,7 @@ export default function LoginPage() {
           <Heading
             textAlign="center"
             color='#7f6bb0'
-			fontWeight='bold'
+			      fontWeight='bold'
             as={"h1"}
             fontSize="20px"
             mb="20px"

@@ -1,5 +1,5 @@
 import { fetchToken } from "../Auth";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { format } from 'date-fns';
@@ -26,7 +26,8 @@ import {
     ModalBody,
     FormControl,
     Button,
-    useDisclosure
+    useDisclosure,
+    Select
 } from '@chakra-ui/react'
 
 
@@ -37,7 +38,7 @@ export default function MainPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProjects, setFilteredProjects] = useState(projects);
     const URL = "http://127.0.0.1:8000"
-    const URL_EXTENSION = "/profile/projects/active_state"
+    const URL_EXTENSION = "/profile/projects/active_state", URL_EXTENSION_PROJECTS = "/profile/projects"
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
 
     const instance = axios.create({
@@ -75,6 +76,18 @@ export default function MainPage() {
         setSearchQuery(e.target.value);
     };
 
+    const [createForm, setCreateForm] = useState({
+        name: '',
+        enterprise: '',
+        public_access: ''
+    });
+
+    const createProject = async (event) => {
+        event.preventDefault();
+        await instance.post(URL + URL_EXTENSION_PROJECTS + "/create", createForm);
+        onCreateClose();
+    }
+
     const NewProjectModal = () => {
         return (
             <Modal
@@ -85,18 +98,32 @@ export default function MainPage() {
                 <ModalContent>
                     <ModalHeader>Crear nuevo proyecto</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody pb={6}>
-                        <FormControl>
-                            <Input placeholder='Nombre' />
-                        </FormControl>
-                    </ModalBody>
+                    <form onSubmit={createProject}>
+                        <ModalBody pb={6}>
+                            <FormControl>
+                                <Input placeholder='Nombre' onChange={(e) =>
+                                    setCreateForm({ ...createForm, name: e.target.value })
+                                } />
+                                <Input placeholder='Empresa' onChange={(e) =>
+                                    setCreateForm({ ...createForm, enterprise: e.target.value })
+                                }
+                                />
+                                <Select placeholder='Visibilidad' onChange={(e) =>
+                                    setCreateForm({ ...createForm, public_access: e.target.value })
+                                }>
+                                    <option value={true}>Público</option>
+                                    <option value={false}>Privado</option>
+                                </Select>
+                            </FormControl>
+                        </ModalBody>
 
-                    <ModalFooter>
-                        <Button onClick={onCreateClose} mr={3}>Cancelar</Button>
-                        <Button colorScheme='purple' >
-                            Crear
-                        </Button>
-                    </ModalFooter>
+                        <ModalFooter>
+                            <Button onClick={onCreateClose} mr={3}>Cancelar</Button>
+                            <Button colorScheme='purple' type='submit'>
+                                Crear
+                            </Button>
+                        </ModalFooter>
+                    </form>
                 </ModalContent>
             </Modal>
         )
@@ -116,7 +143,7 @@ export default function MainPage() {
                     mr='3'
                 />
                 <FaFolderPlus color='#7f6bb0' size='35' cursor='pointer' onClick={onCreateOpen} />
-                <NewProjectModal/>
+                <NewProjectModal />
             </Flex>
             <Container minW='100%' minH="100vh" p='0'>
                 <TableContainer>
