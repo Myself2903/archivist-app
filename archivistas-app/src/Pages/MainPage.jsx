@@ -78,19 +78,24 @@ export default function MainPage() {
         setSearchQuery(e.target.value);
     };
 
-    const [createForm, setCreateForm] = useState({
-        name: '',
-        enterprise: '',
-        public_access: ''
-    });
+    
 
-    const createProject = async (event) => {
-        event.preventDefault();
-        await instance.post(URL + URL_EXTENSION_PROJECTS + "/create", createForm);
-        onCreateClose();
-    }
+
 
     const NewProjectModal = () => {
+        const [createForm, setCreateForm] = useState({
+            name: '',
+            enterprise: '',
+            public_access: ''
+        });
+        
+        const createProject = async (event) => {
+            event.preventDefault();
+            await instance.post(URL + URL_EXTENSION_PROJECTS + "/create", createForm)
+            .then(response =>  navigate(`/org_chart/${response.data.id}`));
+            onCreateClose();
+        }
+        
         return (
             <Modal
                 isOpen={isCreateOpen}
@@ -103,16 +108,10 @@ export default function MainPage() {
                     <form onSubmit={createProject}>
                         <ModalBody pb={6}>
                             <FormControl>
-                                <Input placeholder='Nombre' onChange={(e) =>
-                                    setCreateForm({ ...createForm, name: e.target.value })
-                                } />
-                                <Input placeholder='Empresa' onChange={(e) =>
-                                    setCreateForm({ ...createForm, enterprise: e.target.value })
-                                }
+                                <Input placeholder='Nombre' onChange={e => setCreateForm({ ...createForm, name: e.target.value })} />
+                                <Input placeholder='Empresa' onChange={e => setCreateForm({ ...createForm, enterprise: e.target.value })}
                                 />
-                                <Select placeholder='Visibilidad' onChange={(e) =>
-                                    setCreateForm({ ...createForm, public_access: e.target.value })
-                                }>
+                                <Select placeholder='Visibilidad' onChange={e =>setCreateForm({ ...createForm, public_access: e.target.value })}>
                                     <option value={true}>Público</option>
                                     <option value={false}>Privado</option>
                                 </Select>

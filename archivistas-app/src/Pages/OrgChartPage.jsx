@@ -100,14 +100,13 @@ export default function OrgChartPage() {
         if (token) {
             async function verify_project_access_token() {
 
-                await instance.get(URL + '/profile/projects/verify_access/token', { params: { project_id: project_id } })
-                    .then(response => {
-                        console.log(response)
-                        if (response.data.owner) {
-                            setIsOwner(true)
-                        } else if (!response.data.public_access) {
-                            navigate("/")
-                        }
+                await instance.get(URL + '/profile/projects/verify_access/token', {params: {project_id: project_id}})
+                .then(response => {
+                    if (response.data.owner){
+                        setIsOwner(true)
+                    }else if(!response.data.public_access){
+                        navigate("/")
+                    }
 
                     })
             }
@@ -138,8 +137,9 @@ export default function OrgChartPage() {
 
 
     //Modal definition to create dependency
-    const AddDependencyModal = () => {
-        return (
+    const AddDependencyModal = () =>{
+
+        return(
             <Modal
                 initialFocusRef={initialRef}
                 isOpen={addIsOpen}
@@ -150,46 +150,38 @@ export default function OrgChartPage() {
                     <ModalHeader>Crear nueva dependencia</ModalHeader>
                     <ModalCloseButton />
 
-                    <form onSubmit={() => create_new_node(initialRef.current.value)}>
-                        <ModalBody pb={6}>
-                            <FormControl>
-                                <Input ref={initialRef} placeholder='Nombre' />
-                            </FormControl>
-                        </ModalBody>
-
-                        <ModalFooter>
-                            <Button onClick={addOnClose} mr={3}>Cancelar</Button>
-                            <Button colorScheme='purple' type="submit">
-                                Crear
-                            </Button>
-                        </ModalFooter>
-                    </form>
-
+                <form onSubmit={(e) => create_new_node(e,initialRef.current.value)}>
+                    <ModalBody pb={6}>
+                        <FormControl>
+                        <Input ref={initialRef} placeholder='Nombre' />
+                        </FormControl>
+                    </ModalBody>
+                </form>
                 </ModalContent>
             </Modal>
         )
     }
 
-
-    const create_new_node = async (dependency_name) => {
+    const create_new_node = async (event, dependency_name) => {
+        // event.preventDefault();
         const dependency = {
             name: dependency_name,
-            code: 101,
             project_id: project_id,
             father_id: selectedNode.id,
         }
-
         await instance.post(URL + URL_EXTENSION + "/create", dependency)
             .then(response => {
-                selectedNode.children.push(response.data)
-            })
-
-        addOnClose()
+                setSelectedNode({...selectedNode, children: selectedNode.children.push(response.data)})
+            });
+        
+        addOnClose();            
     }
+    
 
     //Modal definition to delete dependency
-    const DeleteDependencyModal = () => {
-        return (
+    const DeleteDependencyModal  = () =>{
+        
+        return(
             <Modal
                 isOpen={deleteIsOpen}
                 onClose={deleteOnClose}

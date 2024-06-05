@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { fetchToken } from "../Auth";
 import axios from "axios";
 import NavigationAndFooter from "../layout/NavigationAndFooter";
 import {
@@ -15,14 +16,19 @@ import {
 } from "@chakra-ui/react";
 
 export default function LoginPage() {
+  const token = fetchToken();
+  const navigate = useNavigate();
+  if (token){
+      navigate("/main_page")
+  }
+  
   const [count, setCount] = useState(0);
   const [emailValid, setEmailValid] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
-
   const URL = "http://127.0.0.1:8000";
   const URL_EXTENSION = "/token";
 
-  const navigate = useNavigate();
+  
 
   //json structure need for query
   const [loginForm, setLoginForm] = useState({
@@ -79,7 +85,7 @@ export default function LoginPage() {
 
 
   return (
-    <NavigationAndFooter>
+    <NavigationAndFooter logo_url_redirect="/" show_menu={false}>
       <Flex align="center" py="35" flexWrap="wrap" justifyContent="center">
         {!isSmallScreen && (
           <Image
