@@ -37,9 +37,11 @@ export default function MainPage() {
     const [projects, setProjects] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProjects, setFilteredProjects] = useState(projects);
+    const [editForm, setEditForm] = useState({ name: '', enterprise: '', public_access: '' });
     const URL = "http://127.0.0.1:8000"
     const URL_EXTENSION = "/profile/projects/active_state", URL_EXTENSION_PROJECTS = "/profile/projects"
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure()
+    const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
 
     const instance = axios.create({
         headers: {
@@ -129,6 +131,64 @@ export default function MainPage() {
         )
     }
 
+    const openEditModal = (project) => {
+        setEditForm({
+            name: project.name,
+            enterprise: project.enterprise,
+            public_access: project.public_access
+        });
+        onEditOpen();
+    };
+
+    const editProject = async (event) => {
+        event.preventDefault();
+        await instance.put(URL + URL_EXTENSION_PROJECTS + "/update", editForm);
+        onEditClose();
+    }
+
+    const EditProjectModal = () => {
+        return (
+            <Modal
+                isOpen={isEditOpen}
+                onClose={onEditClose}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Editar proyecto</ModalHeader>
+                    <ModalCloseButton />
+                    <form onSubmit={editProject}>
+                        <ModalBody pb={6}>
+                            <FormControl>
+                                <Input placeholder='Nombre' onChange={(e) =>
+                                    setEditForm({ ...editForm, name: e.target.value })
+                                }
+                                    value={editForm.name} />
+                                <Input placeholder='Empresa' onChange={(e) =>
+                                    setEditForm({ ...editForm, enterprise: e.target.value })
+                                }
+                                    value={editForm.enterprise} />
+                                <Select placeholder='Visibilidad' onChange={(e) =>
+                                    setEditForm({ ...editForm, public_access: e.target.value })
+                                }
+                                    value={editForm.public_access}>
+                                    <option value={true}>Público</option>
+                                    <option value={false}>Privado</option>
+                                </Select>
+                            </FormControl>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button onClick={onEditClose} mr={3}>Cancelar</Button>
+                            <Button colorScheme='purple' type='submit'>
+                                Crear
+                            </Button>
+                        </ModalFooter>
+                    </form>
+                </ModalContent>
+            </Modal>
+        )
+    }
+
     return (<>
         <NavigationAndFooter>
             <Flex pl='10' alignItems='center'>
@@ -171,6 +231,7 @@ export default function MainPage() {
                                     <Td>
                                         <Flex gap='10'>
                                             <FaPen cursor='pointer' />
+                                            <EditProjectModal onClick={() => openEditModal(project)}/>
                                             <FaRegTrashAlt cursor='pointer' />
                                         </Flex>
                                     </Td>
