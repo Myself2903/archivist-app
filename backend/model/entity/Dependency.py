@@ -6,7 +6,6 @@ class DependencyDB(Base):
     __tablename__ = "dependencies"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(Integer)
     name = Column(String)
 
     project_id = Column(Integer, ForeignKey("projects.id"))

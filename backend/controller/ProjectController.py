@@ -5,7 +5,7 @@ from DataSource import get_db
 from security.Oauth import get_current_user, oauth2_scheme, Token, get_token_data
 from model.dao.ProjectDao import *
 from typing import Annotated
-from typing import Optional
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/profile/projects")
 
@@ -21,9 +21,9 @@ def get_users_projects(
 
 @router.get("/verify_access", response_model=bool)
 def verify_project_access_no_token(project_id: int, db: Session = Depends(get_db)):
-    return get_project(db=db, project_id=project_id).public_access
+    return JSONResponse(content={"public_access":get_project(db=db, project_id=project_id).public_access})
 
-@router.get("/verify_access/token", response_model=bool)
+@router.get("/verify_access/token")
 def verify_project_access(
                     project_id: int, 
                     token:  Annotated[Token, Depends(oauth2_scheme)],
@@ -32,7 +32,7 @@ def verify_project_access(
     project = get_project(db=db, project_id=project_id)
     token_data = get_token_data(token=token) 
     
-    return project.owner_id == int(token_data.id) or project.public_access
+    return JSONResponse(content={"owner":project.owner_id == int(token_data.id), "public_access":project.public_access})
 
 
 @router.get("/active_state",response_model=list[Project])

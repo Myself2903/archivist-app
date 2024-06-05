@@ -4,6 +4,8 @@ from model.entity.Project import ProjectDB
 from model.schemas.ProjectSchemas import ProjectCreate, ProjectUpdate
 from model.schemas.UserSchemas import User
 from utils.Exceptions import PermissionDeniedException, ProjectNotActiveException
+from model.dao.DependencyDao import create_dependency
+from model.schemas.DependencySchemas import DependencyCreate
 from datetime import datetime
 
 def create_project(db: Session, project: ProjectCreate, user_id: int):
@@ -11,6 +13,16 @@ def create_project(db: Session, project: ProjectCreate, user_id: int):
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
+
+    #create default org chart
+    root_dependency = DependencyCreate(name="Gerencia", project_id=db_project.id)
+    root_dependency_db = create_dependency(db=db, dependency=root_dependency)
+    
+    sub_dependencies = [DependencyCreate(name=f'Dependencia {i+1}', project_id=db_project.id, father_id=root_dependency_db.id) for i in range(3)]
+    
+    for dep in sub_dependencies:
+        create_dependency(db=db, dependency=dep)
+    
     return db_project
 
 def get_project(db: Session, project_id: int):

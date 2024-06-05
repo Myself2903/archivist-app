@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class DependencyBase(BaseModel):
-    code: int
     name: str
 
 class DependencyCreate(DependencyBase):
@@ -18,6 +17,5 @@ class Dependency(DependencyBase):
         from_attributes = True
 
 class DependencyUpdate(BaseModel):
-    code: Optional[int] = None
     name: Optional[str] = None
     father_id: Optional[int] = None

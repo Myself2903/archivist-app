@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from model.entity.Dependency import DependencyDB
 from model.schemas.DependencySchemas import DependencyCreate, DependencyUpdate
 from utils.Exceptions import DeleteRootDependencyException, MultipleRootDependencyException, NotFoundException, SelfDependenceException
-from model.dao.ProjectDao import check_project_active
 
 #dependency by id
 def get_dependency(db: Session, dependency_id: int):
@@ -42,8 +41,6 @@ def check_father_dependency_data(father_id: int, project_id: int, db: Session):
 
 def create_dependency(db: Session, dependency: DependencyCreate):
     db_dependency = DependencyDB(**dependency.dict())
-    
-    check_project_active(db=db, project_id=db_dependency.project_id)
 
     check_father_dependency_data(
                         db=db, 
